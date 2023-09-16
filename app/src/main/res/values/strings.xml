@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Data Structures Simulator</string>
+    <string name="app_name_p1">Data Structures</string>
+    <string name="app_name_p2">Simulator</string>
+    <string name="dash">-</string>
+    <string name="controls_menu">Controls Menu</string>
+    <string name="show_info">Show Info</string>
+    <string name="navigation_menu">Navigation Menu</string>
+    <string name="head">head</string>
+    <string name="tail">tail</string>
+    <string name="Max_Queue">Max_Queue =</string>
+    <string name="Queue_Size">Queue_Size =</string>
+    <string name="close">Close</string>
+    <string name="help">help</string>
+    <string name="queue_array_based">Queue Array-Based</string>
+    <string name="stack_array_based">Stack Array-Based</string>
+    <string name="enqueue">enqueue</string>
+    <string name="clear_queue">Clear</string>
+    <string name="enter_number">enter a number (-999 : 9999)</string>
+    <string name="enqueuing">enqueuing: </string>
+    <string name="dequeue">dequeued: </string>
+
+
+    <string name="top">top</string>
+    <string name="Max_Stack">Max_Stack =</string>
+    <string name="Stack_Size">Stack_Size =</string>
+    <string name="push">push</string>
+    <string name="pop">pop</string>
+    <string name="peek">peek</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+</resources>

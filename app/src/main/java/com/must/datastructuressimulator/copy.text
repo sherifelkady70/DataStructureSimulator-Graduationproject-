@@ -1,0 +1,534 @@
+
+package com.must.datastructuressimulator;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import android.content.Context;
+import android.graphics.Path;
+import android.graphics.Typeface;
+import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewStub;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TableRow;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.must.datastructuressimulator.ds.QueueArrayBased;
+
+public class QueueArrayBasedActivity extends AppCompatActivity implements DialogFragment.onSubmitClickListener {
+
+    QueueArrayBased<Integer> queue;
+    DialogFragment dialogInput;
+
+    int []startPoint = new int[2];
+    float step, step1;
+    int MaxQueue;
+    Context context;
+    TableRow tr_array,
+            tr_indices;
+
+
+
+    Button btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, btn_8, btn_9, btn_minus, btn_del;
+    TextView vv;
+
+    View view;
+    TableRow.LayoutParams layoutParams;
+    TextView tv_head,
+            tv_tail;
+
+    TextView tv_operation,
+            tv_value,
+            tv_item_value,
+            tv_max_queue,
+            tv_queue_size,
+            tv_size,
+            tv_info;
+    ImageView iv_head_arrow,
+            iv_tail_arrow;
+    View arrayItem;
+    DisplayMetrics displayMetrics;
+    int windowWidth, windowHeight;
+
+    int queueElementWidth,
+            queueElementHeight;
+
+    DrawerLayout dl_main;
+    ViewStub vs_main;
+    ViewStub vs_menu_right;
+
+    EditText et_enqueue;
+    Button btn_enqueue, btn_dequeue, btn_clearQueue;
+    ImageButton btn_closeMenu;
+    ImageButton btn_menu;
+    final int LAYOUT_MAIN = R.layout.activity_queue_array_based;
+    final int LAYOUT_RIGHT = R.layout.layout_queue_manipulations;
+
+    View main_content;
+    View controls;
+
+
+    Toast info;
+
+    @Override
+    public void onCreateQueueSize(String size) {
+
+        MaxQueue = Integer.parseInt(size);
+
+        if(MaxQueue >= 1 && MaxQueue <= 20)
+        {
+            queue = new QueueArrayBased<Integer>(MaxQueue);
+            String max_queue = String.format(tv_max_queue.getText().toString() + " " + MaxQueue);
+            tv_max_queue.setText(max_queue);
+            for (int i = 0; i < MaxQueue; ++i)
+            {
+                arrayItem = getLayoutInflater().inflate(R.layout.array_item, null);
+                tr_array.addView(arrayItem, queueElementWidth, queueElementHeight);
+
+                TextView tv_index = new TextView(context);
+
+                tv_index.setText(String.valueOf(i));
+                tv_index.setTextSize(15);
+                tv_index.setGravity(Gravity.CENTER);
+                tv_index.setTypeface(tv_index.getTypeface(), Typeface.BOLD);
+
+                tr_indices.addView(tv_index, queueElementWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
+            }
+
+            dialogInput.dismiss();
+        }
+        else
+        {
+            Toast.makeText(this, "Queue Size Can not be " + MaxQueue, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        UIHelper.hideActivityStatusBar(getWindow());
+        setContentView(R.layout.layout_ds_basic);
+
+        context = this;
+
+        dialogInput = DialogFragment.newInstance("Provide Queue Size", R.drawable.ic_info);
+        dialogInput.setCancelable(false);
+        dialogInput.show(getSupportFragmentManager(), null);
+
+        startPoint[0] = 0;
+        startPoint[1] = 0;
+
+        dl_main = findViewById(R.id.dl_main);
+        vs_main = findViewById(R.id.vs_main);
+        vs_menu_right = findViewById(R.id.vs_menu_right);
+        vs_main.setLayoutResource(LAYOUT_MAIN);
+        vs_menu_right.setLayoutResource(LAYOUT_RIGHT);
+
+        main_content = vs_main.inflate();
+        controls = vs_menu_right.inflate();
+
+
+        tr_array = main_content.findViewById(R.id.array);
+        tr_indices = main_content.findViewById(R.id.indices);
+
+        tv_operation = main_content.findViewById(R.id.tv_operation);
+        tv_value = main_content.findViewById(R.id.tv_valuee);
+        tv_head = main_content.findViewById(R.id.tv_head);
+        tv_tail = main_content.findViewById(R.id.tv_tail);
+        tv_max_queue = main_content.findViewById(R.id.tv_max_queue);
+        tv_queue_size = main_content.findViewById(R.id.tv_queue_size);
+        tv_size = main_content.findViewById(R.id.tv_size);
+        iv_head_arrow = main_content.findViewById(R.id.iv_head_arrow);
+        iv_tail_arrow = main_content.findViewById(R.id.iv_tail_arrow);
+        btn_menu = main_content.findViewById(R.id.btn_menu);
+
+        et_enqueue = controls.findViewById(R.id.et_enqueue);
+        btn_enqueue = controls.findViewById(R.id.btn_enqueue);
+        btn_dequeue = controls.findViewById(R.id.btn_dequeue);
+        btn_clearQueue = controls.findViewById(R.id.btn_clear_queue);
+        btn_closeMenu = controls.findViewById(R.id.btn_closemenu);
+
+
+        btn_0 = controls.findViewById(R.id.btn_0);
+        btn_1 = controls.findViewById(R.id.btn_1);
+        btn_2 = controls.findViewById(R.id.btn_2);
+        btn_3 = controls.findViewById(R.id.btn_3);
+        btn_4 = controls.findViewById(R.id.btn_4);
+        btn_5 = controls.findViewById(R.id.btn_5);
+        btn_6 = controls.findViewById(R.id.btn_6);
+        btn_7 = controls.findViewById(R.id.btn_7);
+        btn_8 = controls.findViewById(R.id.btn_8);
+        btn_9 = controls.findViewById(R.id.btn_9);
+        btn_minus = controls.findViewById(R.id.btn_minus);
+        btn_del = controls.findViewById(R.id.btn_del);
+        tv_info = main_content.findViewById(R.id.tv_info);
+
+
+        displayMetrics = new DisplayMetrics();
+
+        getWindow().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+        windowWidth = displayMetrics.widthPixels;
+        windowHeight = displayMetrics.heightPixels;
+
+
+
+        queueElementWidth = (int)UIHelper.dpToPx(context, Constants.ARRAY_ELEMENT_WIDTH);
+        queueElementHeight = (int)UIHelper.dpToPx(context, Constants.ARRAY_ELEMENT_HEIGHT);
+
+        tv_max_queue.setTextSize(20);
+        tv_queue_size.setText(tv_queue_size.getText().toString() + " ");
+        tv_size.setText("0");
+
+
+        tv_head.setTextSize(15);
+        tv_tail.setTextSize(15);
+        tv_queue_size.setTextSize(20);
+        tv_operation.setTextSize(20);
+        tv_value.setTextSize(20);
+        tv_size.setTextSize(20);
+        tv_head.setTypeface(tv_head.getTypeface(), Typeface.BOLD);
+        tv_value.setText(" ");
+
+        if(startPoint[0] == 0 && startPoint[1] == 0) {
+            //System.out.println("YYYYYYYYYYYYYYEAAAAA");
+            tv_value.getLocationOnScreen(startPoint);
+            //System.out.println("STARTING POINT: (" + startPoint[0] + ", " + startPoint[1] + ")");
+        }
+
+
+        et_enqueue.setShowSoftInputOnFocus(false);
+
+        btn_enqueue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        String val = et_enqueue.getText().toString();
+                        step = tv_tail.getTranslationX() + queueElementWidth;
+
+                        //System.out.println("STARTING POINT: (" + startPoint[0] + ", " + startPoint[1] + ")");
+
+                        if(!val.isEmpty())
+                        {
+                            final String value = String.valueOf(Integer.parseInt(val));
+
+                            // There is a bug right here
+                            if(queue.getRear() == MaxQueue - 1)
+                            {
+                                tv_operation.setVisibility(View.INVISIBLE);
+                                tv_value.setVisibility(View.INVISIBLE);
+                                vv.setText(value);
+                                tv_size.setText(String.valueOf(queue.size()));
+                                step = tv_tail.getTranslationX() - queueElementWidth * (MaxQueue - 1);
+                            }
+
+                            tv_info.setText("Enqueuing: " + value);
+
+                            tv_operation.setTextSize(20);
+                            tv_value.setTextSize(20);
+
+                            tv_operation.setText("Enqueuing: ");
+                            tv_value.setText(value);
+
+                            try {
+
+                                int []location = new int[2];
+
+                                vv =  tr_array.getChildAt(queue.getRear()).findViewById(R.id.tv_item_value);
+                                vv.setTextSize(20);
+                                vv.getLocationOnScreen(location);
+                                queue.enqueue(Integer.parseInt(value));
+
+
+                                if(startPoint[0] == 0 && startPoint[1] == 0) {
+                                    //System.out.println("YYYYYYYYYYYYYYEAAAAA");
+                                    tv_value.getLocationOnScreen(startPoint);
+                                    //System.out.println("STARTING POINT: (" + startPoint[0] + ", " + startPoint[1] + ")");
+                                }
+
+
+
+                                Path path = new Path();
+                                float offset = (queueElementWidth / (float)4);
+
+                                path.moveTo(startPoint[0], startPoint[1]);
+                                path.lineTo(location[0] - offset, location[1] - offset);
+                                tv_operation.setVisibility(View.VISIBLE);
+                                tv_value.setVisibility(View.VISIBLE);
+
+                                ViewAnimator.animate(tv_value).bounceIn().duration(Constants.ANIMATION_SPEED).start();
+                                ViewAnimator.animate(tv_value).path(path).duration(Constants.ANIMATION_SPEED).start();
+
+                                tv_value.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        tv_operation.setVisibility(View.INVISIBLE);
+                                        tv_value.setVisibility(View.INVISIBLE);
+                                        vv.setText(value);
+                                        ViewAnimator.animate(tv_item_value).slideTop().duration(Constants.ANIMATION_SPEED).start();
+                                    }
+                                }, Constants.ANIMATION_SPEED);
+
+
+                                tv_tail.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        ViewAnimator.animate(tv_tail).translationX(step)
+                                                .duration(Constants.ANIMATION_SPEED).start();
+
+                                        ViewAnimator.animate(iv_tail_arrow).translationX(step)
+                                                .duration(Constants.ANIMATION_SPEED).start();
+                                    }
+                                }, Constants.ANIMATION_SPEED);
+
+                                tv_size.postDelayed(
+                                        new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                tv_size.setText(String.valueOf(queue.size()));
+                                                ViewAnimator.animate(tv_size).bounce().duration(Constants.ANIMATION_SPEED).start();
+                                                info = Toast.makeText(context, "Done", Toast.LENGTH_SHORT);
+                                                info.show();
+                                            }
+                                        }, Constants.ANIMATION_SPEED * 2L
+                                );
+
+
+
+                            }catch (RuntimeException e)
+                            {
+                                Toast toast = Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+
+                        }
+
+                    }
+                });
+
+                dl_main.closeDrawer(GravityCompat.END);
+
+
+            }
+        });
+
+        btn_dequeue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                step1 = tv_head.getTranslationX() + queueElementWidth;
+
+                if(queue.getFront() == MaxQueue - 1)
+                {
+                    tv_operation.setVisibility(View.INVISIBLE);
+                    tv_value.setVisibility(View.INVISIBLE);
+                    vv.setText("");
+                    tv_size.setText(String.valueOf(queue.size()));
+                    step1 = tv_head.getTranslationX() - queueElementWidth * (MaxQueue - 1);
+                }
+
+                try
+                {
+                    queue.dequeue();
+                    if(queue.getFront() != 0)
+                        view = tr_array.getChildAt(queue.getFront() - 1);
+                    else
+                        view = tr_array.getChildAt(MaxQueue - 1);
+
+                    vv = view.findViewById(R.id.tv_item_value);
+
+                    tv_info.setText("Dequeuing value: " + vv.getText().toString());
+
+                    tv_operation.setVisibility(View.VISIBLE);
+                    tv_value.setVisibility(View.VISIBLE);
+
+                    tv_operation.setText("Dequeued: ");
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tv_value.setText(vv.getText().toString());
+                            Path path = new Path();
+                            int []a = new int[2];
+                            vv.getLocationOnScreen(a);
+                            //System.out.println("STARTING POINT: (" + startPoint[0] + ", " + startPoint[1] + ")");
+                            //path.moveTo(a[0], a[1]);
+
+                            vv.setText("");
+                            tv_value.setX(startPoint[0]);
+                            tv_value.setY(startPoint[1]);
+                            path.lineTo(startPoint[0], startPoint[1]);
+                            ViewAnimator.animate(vv).path(path).duration(Constants.ANIMATION_SPEED).start();
+
+                            tv_head.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+
+
+
+                                    ViewAnimator.animate(tv_head).translationX(step1).
+                                            duration(Constants.ANIMATION_SPEED).start();
+                                    ViewAnimator.animate(iv_head_arrow).translationX(step1).
+                                            duration(Constants.ANIMATION_SPEED).start();
+
+                                    tv_operation.setVisibility(View.INVISIBLE);
+                                    tv_value.setVisibility(View.INVISIBLE);
+
+
+                                }
+                            }, Constants.ANIMATION_SPEED);
+
+
+                            tv_size.postDelayed(
+                                    new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            tv_size.setText(String.valueOf(queue.size()));
+                                            ViewAnimator.animate(tv_size).bounce().duration(Constants.ANIMATION_SPEED).start();
+                                            info = Toast.makeText(context, "Done", Toast.LENGTH_SHORT);
+                                            info.show();
+                                        }
+                                    }, Constants.ANIMATION_SPEED * 2L
+                            );
+                        }
+                    });
+
+                }catch (RuntimeException e)
+                {
+                    Toast toast = Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG);
+                    toast.show();
+                }
+
+                dl_main.closeDrawer(GravityCompat.END);
+            }
+
+        });
+
+
+        btn_menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dl_main.openDrawer(GravityCompat.END);
+            }
+        });
+
+        btn_closeMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dl_main.closeDrawer(GravityCompat.END);
+            }
+        });
+
+        StringBuilder a = new StringBuilder();
+        btn_0.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                a.append("0");
+                et_enqueue.setText(a.toString());
+            }
+        });
+
+        btn_1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                a.append("1");
+                et_enqueue.setText(a.toString());
+            }
+        });
+
+        btn_2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                a.append("2");
+                et_enqueue.setText(a.toString());
+            }
+        });
+
+        btn_3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                a.append("3");
+                et_enqueue.setText(a.toString());
+            }
+        });
+        btn_4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                a.append("4");
+                et_enqueue.setText(a.toString());
+            }
+        });
+        btn_5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                a.append("5");
+                et_enqueue.setText(a.toString());
+            }
+        });
+        btn_6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                a.append("6");
+                et_enqueue.setText(a.toString());
+            }
+        });
+        btn_7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                a.append("7");
+                et_enqueue.setText(a.toString());
+            }
+        });
+
+        btn_8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                a.append("8");
+                et_enqueue.setText(a.toString());
+            }
+        });
+
+        btn_9.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                a.append("9");
+                et_enqueue.setText(a.toString());
+            }
+        });
+
+        btn_minus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                a.append("-");
+                et_enqueue.setText(a.toString());
+            }
+        });
+
+        btn_del.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(a.length() != 0) {
+                    a.deleteCharAt(a.length() - 1);
+                    et_enqueue.setText(a.toString());
+                }
+
+            }
+        });
+
+    }
+
+}
